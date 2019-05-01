@@ -14,7 +14,7 @@ public class Main {
 			try {
 				System.out.print("Who goes first, C for computer, O for opponent: ");
 				first = keyboard.next().charAt(0);
-				if (first == 'C' || first == 'O') {
+				if (first == 'C' || first == 'O' || first == 'c' || first == 'o') {
 					validInput = true;
 				} else {
 					throw new Exception();
@@ -40,6 +40,11 @@ public class Main {
 				keyboard.nextLine();
 			}
 		}
+		keyboard.nextLine();
 		Game game = new Game(first, timeLimit);
+		keyboard.close();
+		
+		
+		
 	}
 }
