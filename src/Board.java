@@ -1,5 +1,3 @@
-import java.util.HashSet;
-
 public class Board {
 
 	private char[][] board;
@@ -32,27 +30,37 @@ public class Board {
 		return board;
 	}
 
-	public boolean move(Player player, String input){
+	public boolean move(Player player, String input) {
+		try {
 			char symbol = player.getSymbol();
 			String move = input.toUpperCase();
-			int x = ((int) move.charAt(0)) - 65;
-			int y = Character.getNumericValue(move.charAt(1)) - 1;
-			if( x < 0 || y < 0 || x > 7 || y > 7) {
+			int x = Character.getNumericValue(move.charAt(1)) - 1;
+			int y = ((int) move.charAt(0)) - 65;
+			if (x < 0 || y < 0 || x > 7 || y > 7) {
+				System.out.println("Invalid input.");
 				return false;
 			}
-			System.out.println("x: " + x + ", y: " + y);
-			board[y][x] = symbol;
-			board[player.getY()][player.getX()] = '#';
-			player.setX(x);
-			player.setY(y);
-			if (symbol == 'X') {
-				computerMoves[player.getNumMovesMade()] = move;
+			String coordinate = Integer.toString(x) + Integer.toString(y);
+			if (player.canMove(coordinate)) {
+				board[x][y] = symbol;
+				board[player.getX()][player.getY()] = '#';
+				player.setX(x);
+				player.setY(y);
+				if (symbol == 'X') {
+					computerMoves[player.getNumMovesMade()] = move;
+				} else {
+					opponentMoves[player.getNumMovesMade()] = move;
+				}
+				player.moveMade();
+				return true;
 			} else {
-				opponentMoves[player.getNumMovesMade()] = move;
-				System.out.println("op");
+				System.out.println("Cannot move there!");
+				return false;
 			}
-			player.moveMade();
-			return true;
+		} catch (Exception e) {
+			System.out.println("Invalid input.");
+			return false;
+		}
 	}
 
 	@Override

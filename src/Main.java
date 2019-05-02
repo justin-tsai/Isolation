@@ -42,6 +42,7 @@ public class Main {
 		}
 		keyboard.nextLine();
 		Game game = new Game(first, timeLimit);
+		game.start();
 		keyboard.close();
 		
 		

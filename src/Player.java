@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
 
@@ -6,6 +8,7 @@ public class Player {
 	private int x;
 	private int y;
 	private char symbol;
+	private List<String> moves = new ArrayList<String>();
 	
 	public Player(int x, int y, char symbol) {
 		possibleMoves = new int[8];
@@ -43,15 +46,32 @@ public class Player {
 		return numMovesMade;
 	}
 	
+	public boolean canMove(String move) {
+		if(moves.contains(move)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean hasMoves() {
+		if(moves.isEmpty()){
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
 	public int[] calculate(Board board) {
+		moves.clear();
 		char[][] boardState = board.getBoardState();
-		
 		//N
 		int tempX = x;
 		int tempY = y - 1;
 		while (tempY >= 0) {
 			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[0]++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
 				tempY--;
 			}else {
 				break;
@@ -61,10 +81,12 @@ public class Player {
 		tempX = x + 1;
 		tempY = y - 1;
 		while (tempY >= 0 && tempX < 8) {
-			System.out.println("x: " + tempX);
-			System.out.println("y: " + tempY);
+			//System.out.println("x: " + tempX);
+			//System.out.println("y: " + tempY);
 			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[1]++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
 				tempX++;
 				tempY--;
 			}else {
@@ -78,6 +100,8 @@ public class Player {
 		while (tempX < 8) {
 			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[2]++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
 				tempX++;
 			}else {
 				break;
@@ -89,6 +113,8 @@ public class Player {
 		while (tempX < 8 && tempY < 8) {
 			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[3]++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
 				tempX++;
 				tempY++;
 			}else {
@@ -102,6 +128,8 @@ public class Player {
 		while (tempY < 8) {
 			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[4]++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
 				tempY++;
 			}else {
 				break;
@@ -113,6 +141,8 @@ public class Player {
 		while (tempX >= 0 && tempY < 8) {
 			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[5]++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
 				tempX--;
 				tempY++;
 			}else {
@@ -124,9 +154,11 @@ public class Player {
 		tempX = x - 1;
 		tempY = y;
 		while (tempX >= 0) {
-			if(boardState[tempX][tempY] == '#')  {
+			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[6]++;
-				tempX++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
+				tempX--;
 			}else {
 				break;
 			}
@@ -137,15 +169,13 @@ public class Player {
 		while (tempX >= 0 && tempY >= 0) {
 			if(boardState[tempX][tempY] == '-')  {
 				possibleMoves[7]++;
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
 				tempX--;
 				tempY--;
 			}else {
 				break;
 			}
-		}
-		
-		for(int i = 0; i < possibleMoves.length; i++) {
-			System.out.println(possibleMoves[i]);
 		}
 		return possibleMoves;
 	}
