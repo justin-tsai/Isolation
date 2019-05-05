@@ -74,7 +74,7 @@ public class Game {
 					opponentHasMoves = false;
 					break;
 				} else {
-					computerHasMoves = moveCOMPUTER();
+					computerHasMoves = moveOPPONENT2();
 				}
 				board.nextTurn();
 			}
@@ -117,7 +117,7 @@ public class Game {
 		if (X.hasMoves()) {
 			System.out.print("\nEnter computer's move: ");
 			String move = keyboard.nextLine();
-			if (board.move(X, move) == true) {
+			if (board.move2(X, move) == true) {
 				System.out.println(board.toString());
 				return true;
 			} else {
@@ -137,7 +137,7 @@ public class Game {
 
 	/* To do */
 	public boolean moveCOMPUTER() {
-		board.move2(X, ab.alphaBetaSearch(X, O, board));
+		board.move(X, ab.alphaBetaSearch(X, O, board));
 		System.out.println("Opponent moved: ");
 		System.out.println(board.toString());
 		board.setTurn(1);

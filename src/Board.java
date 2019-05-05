@@ -14,6 +14,10 @@ public class Board {
 		return computerMoves;		
 	}
 	
+	public String[] getOpponentMove() {
+		return opponentMoves;
+	}
+	
 	public Board(char first) {
 		board = new char[8][8];
 		for (int i = 0; i < 8; i++) {
@@ -88,10 +92,14 @@ public class Board {
 	}
 
 	public boolean move2(Player player, String input) {
+		//System.out.println("input: " + input);
+		player.calculate(this);
 		char symbol = player.getSymbol();
 		int x = Character.getNumericValue(input.charAt(0));
 		int y = Character.getNumericValue(input.charAt(1));
-		String move = (char)(y+65) + Integer.toString(x+1);
+		char letter = (char) (y + 65);
+		String move = letter + Integer.toString(x+1);
+		//System.out.println("move: " + move);
 		if (player.canMove(input)) {
 			board[x][y] = symbol;
 			board[player.getX()][player.getY()] = '#';
@@ -105,6 +113,7 @@ public class Board {
 			player.moveMade();
 			return true;
 		} else {
+			System.out.println("input: " + input);
 			System.out.println("Cannot move there!");
 			return false;
 		}

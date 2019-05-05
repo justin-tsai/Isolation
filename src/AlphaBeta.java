@@ -14,96 +14,96 @@ public class AlphaBeta {
 	}
 
 	public String alphaBetaSearch(Player X, Player O, Board board) {
-		turns++;
-		int best = max(X, O, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+		Node best = max(X, O, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
 		//default:
-		System.out.println("FINAL VALUE: " + best);
-		for (String move : X.getMoves()) {
-			System.out.println("movelist: " + move );
-			if (X.getValue(board, move) == best) {
-				System.out.println("final move: " + move);
-				System.out.println(finalB.getComputerMove()[turns]);
-				return move;
-			}
-		}
-		System.out.println(finalB.getComputerMove()[turns]);
-		System.out.println("default move: " + X.getMoves().get(0));
-		return X.getMoves().get(0);
+		Board bestBoard = best.getBoard();
+		System.out.println("best board: \n" + bestBoard);
+		String bestMove =  bestBoard.getComputerMove()[turns];
+		turns++;
+		System.out.println("move to" + bestMove);
+		return bestMove;
 	}
 
-	public int max(Player X, Player O, Board board, int alpha, int beta, int depth) {
-		X.calculate(board);
-		O.calculate(board);
+	public Node max(Player X, Player O, Board board, int alpha, int beta, int depth) {
 		if (depth > depthLimit) {
-			return utility(board, X);
+			return utility(board, X, depth);
 		}
 		int value = Integer.MIN_VALUE;
+		Node node = new Node(board, value);
 		Iterator<String> itr = X.getMoves().iterator();
 		while(itr.hasNext()) {
 			String move = itr.next();
 			Player xTemp = X.getDeepCopy();
 			Player oTemp = O.getDeepCopy();
 			Board temp = board.getDeepCopy();
+			xTemp.calculate(temp);
+			oTemp.calculate(temp);
 			temp.move2(xTemp, move);
-			int min = min(xTemp, oTemp, temp, alpha, beta, depth + 1);
-			if (min > value) {
-				value = min;
+			xTemp.calculate(temp);
+			oTemp.calculate(temp);
+			Node min = min(xTemp, oTemp, temp, alpha, beta, depth + 1);
+			if (min.getN() > node.getN()) {
+				node = min;
 			}
-			if (value >= beta) {
+			if (node.getN() >= beta) {
 				//System.out.println("v: " + value);
-				return value;
+				return node;
 			}
 
-			if (value > alpha) {
-				alpha = value;
+			if (node.getN() > alpha) {
+				alpha = node.getN();
 			}
 		}
-		return value;
+		return node;
 
 	}
 
-	public int min(Player X, Player O, Board board, int alpha, int beta, int depth) {
-		X.calculate(board);
-		O.calculate(board);
+	public Node min(Player X, Player O, Board board, int alpha, int beta, int depth) {
 		if (depth > depthLimit) {
-			return utility(board, O);
+			return utility(board, O, depth);
 		}
 		int value = Integer.MAX_VALUE;
+		Node node = new Node(board, value);
 		Iterator<String> itr = O.getMoves().iterator();
 		while(itr.hasNext()) {
 			String move = itr.next();
 			Board temp = board.getDeepCopy();
 			Player oTemp = O.getDeepCopy();
 			Player xTemp = X.getDeepCopy();
+			xTemp.calculate(temp);
+			oTemp.calculate(temp);
 			temp.move2(oTemp, move);
-			int max = max(xTemp, oTemp, temp, alpha, beta, depth + 1);
-			if (max < value) {
-				value = max;
+			xTemp.calculate(temp);
+			oTemp.calculate(temp);
+			Node max = max(xTemp, oTemp, temp, alpha, beta, depth + 1);
+			if (max.getN() < node.getN()) {
+				node = max;
 			}
-			if (value <= alpha) {
+			if (node.getN() <= alpha) {
 				//System.out.println("v: " + value);
-				return value;
+				return node;
 			}
 
-			if (value < beta) {
-				beta = value;
+			if (node.getN() < beta) {
+				beta = node.getN();
 			}
 		}
-		return value;
+		return node;
 
 	}
 
-	public int utility(Board board, Player player) {
+	public Node utility(Board board, Player player, int depth) {
 		int value;
 		player.calculate(board);
 		if (!player.hasMoves()) {
 			value = (player.getSymbol() == 'X') ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 		} else {
-			value = (player.getSymbol() == 'O') ? -player.getNumMovesAvailable() : player.getNumMovesAvailable();
+			value = (player.getSymbol() == 'O') ? -player.getNumMovesAvailable() + depth : player.getNumMovesAvailable() - depth;
 			finalB = board;
 		}
 		//System.out.println("Utility Value: " + value);
-		return value;
+		Node node = new Node(board, value);
+		return node;
 	}
 
 }
