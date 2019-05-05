@@ -138,8 +138,8 @@ public class Game {
 	/* To do */
 	public boolean moveCOMPUTER() {
 		board.move(X, ab.alphaBetaSearch(X, O, board));
-		System.out.println("Opponent moved: ");
-		System.out.println(board.toString());
+		System.out.println("Opponent moved to: " + board.getComputerMove()[X.getNumMovesMade() - 1]);
+		System.out.println(board.toString() + "\n");
 		board.setTurn(1);
 		return true;
 	}

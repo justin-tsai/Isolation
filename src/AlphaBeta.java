@@ -17,10 +17,10 @@ public class AlphaBeta {
 		Node best = max(X, O, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
 		//default:
 		Board bestBoard = best.getBoard();
-		System.out.println("best board: \n" + bestBoard);
+		//System.out.println("best board: \n" + bestBoard);
 		String bestMove =  bestBoard.getComputerMove()[turns];
 		turns++;
-		System.out.println("move to" + bestMove);
+		//System.out.println("move to" + bestMove);
 		return bestMove;
 	}
 
