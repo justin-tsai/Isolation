@@ -1,120 +1,100 @@
-import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AlphaBeta {
 
-	private static int maxDepth;
-	private static String BITCHINGMOVE;
-	private static int maxTime;
-	public AlphaBeta(int maxTime) {
-		this.maxTime = maxTime;
+	private int timeLimit;
+	private int depthLimit = 5;
+	private int MAX = 1000;
+	private int MIN = -1000;
+
+	public AlphaBeta(int timeLimit) {
+		this.timeLimit = timeLimit;
 	}
 
-	public static int AlphaBeta(Board board, Player playerx, Player playero, int alpha, int beta, int depth) {
-		playerx.calculate(board);
-		if (depth > maxDepth || playerx.getNumMovesAvailable() == 0) {
-			System.out.println(heur(board, playerx, depth));
-			return heur(board, playerx, depth);
+	public String alphaBetaSearch(Player X, Player O, Board board) {
+		int best = max(X, O, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+		//default:
+		System.out.println("FINAL VALUE: " + best);
+		for (String move : X.getMoves()) {
+			if (X.getValue(board, move) == best) {
+				System.out.println("move: " + move);
+				return move;
+			}
 		}
+		System.out.println("default move: " + X.getMoves().get(0));
+		return X.getMoves().get(0);
+	}
 
-		if (board.getTurn() == 0) {
-			return max(board, playerx, playero, alpha, beta, depth);
-		} else {
-			return mini(board, playerx, playero, alpha, beta, depth);
+	public int max(Player X, Player O, Board board, int alpha, int beta, int depth) {
+		X.calculate(board);
+		O.calculate(board);
+		if (depth > depthLimit) {
+			return utility(board, X);
 		}
+		int value = Integer.MIN_VALUE;
+		Iterator<String> itr = X.getMoves().iterator();
+		while(itr.hasNext()) {
+			String move = itr.next();
+			Player xTemp = X.getDeepCopy();
+			Player oTemp = O.getDeepCopy();
+			Board temp = board.getDeepCopy();
+			temp.move2(xTemp, move);
+			int min = min(xTemp, oTemp, temp, alpha, beta, depth + 1);
+			if (min > value) {
+				value = min;
+			}
+			if (value >= beta) {
+				return value;
+			}
 
-
-
+			if (value > alpha) {
+				alpha = value;
+			}
+		}
+		return value;
 
 	}
 
-	private static int mini(Board board, Player playerx, Player playero, int alpha, int beta, int depth) {
-		int bestMove = -1;
-		playerx.calculate(board);
-		playero.calculate(board);
-		ArrayList<String> moves = playero.getMoves();
-		System.out.println("moves min can make: ");
-		System.out.println(moves);
-		for (int i = 0; i < playero.getNumMovesAvailable(); i++) {
-			Board copy = board.getDeepCopy();
-			Player playerxcopy = playerx.getDeepCopy();
-			Player playerocopy = playero.getDeepCopy();
-			System.out.println(moves.get(i));
-			copy.move2(playerocopy, moves.get(i));
-			System.out.println(copy.toString());
-
-			int heur = AlphaBeta(copy, playerxcopy, playerocopy, alpha, beta, depth);
-
-			if (heur < beta) {
-				beta = heur;
-				bestMove = i;
-
+	public int min(Player X, Player O, Board board, int alpha, int beta, int depth) {
+		X.calculate(board);
+		O.calculate(board);
+		if (depth > depthLimit) {
+			return utility(board, O);
+		}
+		int value = Integer.MAX_VALUE;
+		Iterator<String> itr = O.getMoves().iterator();
+		while(itr.hasNext()) {
+			String move = itr.next();
+			Board temp = board.getDeepCopy();
+			Player oTemp = O.getDeepCopy();
+			Player xTemp = X.getDeepCopy();
+			temp.move2(oTemp, move);
+			int max = max(xTemp, oTemp, temp, alpha, beta, depth + 1);
+			if (max < value) {
+				value = max;
 			}
-			//alpha beta pruning
-			if (alpha >= beta) {
-				System.out.println("BREAK");
-				break;
+			if (value <= beta) {
+				return value;
+			}
+
+			if (value < beta) {
+				beta = value;
 			}
 		}
+		return value;
 
-		if (bestMove != -1 && !moves.isEmpty()) {
-			board.move2(playero, moves.get(bestMove));
-			System.out.println(moves.get(bestMove));
-		}
-
-		return beta;
 	}
 
-	private static int max(Board board, Player playerx, Player playero, int alpha, int beta, int depth) {
-		int bestMove = -1;
-		playerx.calculate(board);
-		playero.calculate(board);
-		ArrayList<String> moves = playerx.getMoves();
-		System.out.println("moves max can make: ");
-		System.out.println(moves);
-		for (int i = 0; i < playerx.getNumMovesAvailable(); i++) {
-			Board copy = board.getDeepCopy();
-			Player playerxcopy = playerx.getDeepCopy();
-			Player playerocopy = playero.getDeepCopy();
-			System.out.println("max" + moves.get(i));
-			copy.move2(playerxcopy, moves.get(i));
-			System.out.println(copy.toString());
-			int heur = AlphaBeta(copy, playerxcopy, playerocopy, alpha, beta, depth);
-
-			if (heur > alpha) {
-				alpha = heur;
-				bestMove = i;
-				BITCHINGMOVE = moves.get(i);
-				System.out.println(BITCHINGMOVE);
-			}
-			//alpha beta pruning
-			if (alpha >= beta) {
-				System.out.println("BREAK");
-				break;
-			}
-		}
-
-		if (bestMove != -1 && !moves.isEmpty()) {
-			board.move2(playerx, moves.get(bestMove));
-			System.out.println(moves.get(bestMove));
-		}
-		return beta;
-	}
-
-	private static int heur(Board board, Player player, int depth) {
+	public int utility(Board board, Player player) {
+		int value;
 		player.calculate(board);
-		if (board.getTurn() == 0 && player.hasMoves() == false) {
-			return -100 + depth;
-		} else if (board.getTurn() == 0 && player.hasMoves() == true) {
-			return player.getNumMovesAvailable();
+		if (!player.hasMoves()) {
+			value = (player.getSymbol() == 'X') ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+		} else {
+			value = (player.getSymbol() == 'O') ? -player.getNumMovesAvailable() : player.getNumMovesAvailable();
 		}
-
-		if (board.getTurn() == 1 && player.hasMoves() == false) {
-			return 100 - depth;
-		} else if (board.getTurn() == 1 && player.hasMoves() == true) {
-			return -player.getNumMovesAvailable();
-		}
-
-		return 0;
+		//System.out.println("Utility Value: " + value);
+		return value;
 	}
-	
+
 }

@@ -8,6 +8,7 @@ public class Game {
 	private Player X;
 	private Player O;
 	public static Scanner keyboard;
+	private AlphaBeta ab;
 
 	public Game(char first, int timeLimit) {
 		this.first = first;
@@ -16,6 +17,7 @@ public class Game {
 		X = new Player(0, 0, 'X');
 		O = new Player(7, 7, 'O');
 		keyboard = new Scanner(System.in);
+		ab = new AlphaBeta(timeLimit);
 	}
 
 	public void start() {
@@ -135,7 +137,7 @@ public class Game {
 
 	/* To do */
 	public boolean moveCOMPUTER() {
-		AlphaBeta.AlphaBeta(board, X, O, -999, 999, 0);
+		board.move2(X, ab.alphaBetaSearch(X, O, board));
 		System.out.println("Opponent moved: ");
 		System.out.println(board.toString());
 		board.setTurn(1);

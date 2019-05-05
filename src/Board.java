@@ -82,20 +82,24 @@ public class Board {
 	}
 
 	public boolean move2(Player player, String input) {
-		try {
-			int x = Character.getNumericValue(input.charAt(0));
-			int y = Character.getNumericValue(input.charAt(1));
-			board[x][y] = player.getSymbol();
+		char symbol = player.getSymbol();
+		int x = Character.getNumericValue(input.charAt(0));
+		int y = Character.getNumericValue(input.charAt(1));
+		String move = (char)(x+58) + Integer.toString(y+8);
+		if (player.canMove(input)) {
+			board[x][y] = symbol;
+			board[player.getX()][player.getY()] = '#';
 			player.setX(x);
 			player.setY(y);
-			if(player.getSymbol() == 'X') {
-				setTurn(1);
-			}else {
-				setTurn(0);
+			if (symbol == 'X') {
+				computerMoves[player.getNumMovesMade()] = move;
+			} else {
+				opponentMoves[player.getNumMovesMade()] = move;
 			}
-				return true;
-		} catch (Exception e) {
-			System.out.println("Error");
+			player.moveMade();
+			return true;
+		} else {
+			System.out.println("Cannot move there!");
 			return false;
 		}
 	}
@@ -111,8 +115,10 @@ public class Board {
 		copy.match = this.match;
 		copy.opponentMoves = new String[32];
 		copy.computerMoves = new String[32];
-		copy.opponentMoves = this.opponentMoves;
-		copy.computerMoves = this.computerMoves;
+		for (int i = 0; i < 32; i++) {
+			copy.opponentMoves[i] = opponentMoves[i];
+			copy.computerMoves[i] = computerMoves[i];
+		}
 		copy.first = this.first;
 		copy.turns = this.turns;
 		copy.turn = this.turn;

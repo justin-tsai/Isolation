@@ -26,7 +26,9 @@ public class Player {
 		copy.x = this.x;
 		copy.y = this.y;
 		copy.symbol = this.symbol;
-		copy.moves = this.moves;
+		for(String str : moves) {
+			copy.moves.add(str);
+		}
 		return copy;
 	}
 	
@@ -179,6 +181,14 @@ public class Player {
 				break;
 			}
 		}
+	}
+	
+	public int getValue(Board board, String move) {
+		Board temp = board.getDeepCopy();
+		Player temp2 = getDeepCopy();
+		temp.move2(temp2, move);
+		temp2.calculate(temp);
+		return temp2.getNumMovesAvailable();
 	}
 	
 	public int getNumMovesAvailable() {
