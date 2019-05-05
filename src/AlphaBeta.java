@@ -4,9 +4,9 @@ public class AlphaBeta {
 
 	private static int maxDepth;
 	private static String BITCHINGMOVE;
-
-	private AlphaBeta() {
-
+	private static int maxTime;
+	public AlphaBeta(int maxTime) {
+		this.maxTime = maxTime;
 	}
 
 	public static int AlphaBeta(Board board, Player playerx, Player playero, int alpha, int beta, int depth) {
