@@ -5,6 +5,8 @@ public class Board {
 	private String[] opponentMoves;
 	private String[] computerMoves;
 	private char first;
+	public int turns;
+	private int turn;
 
 	public Board(char first) {
 		board = new char[8][8];
@@ -23,11 +25,27 @@ public class Board {
 			computerMoves[i] = "";
 		}
 		this.first = first;
-		System.out.println("first: " + first);
+		turns = 0;
+	}
+
+	public Board() {
+
 	}
 
 	public char[][] getBoardState() {
 		return board;
+	}
+
+	public void setTurn(int i) {
+		turn = i;
+	}
+
+	public int getTurn() {
+		return turn;
+	}
+
+	public void nextTurn() {
+		turns++;
 	}
 
 	public boolean move(Player player, String input) {
@@ -63,11 +81,52 @@ public class Board {
 		}
 	}
 
+	public boolean move2(Player player, String input) {
+		try {
+			int x = Character.getNumericValue(input.charAt(0));
+			int y = Character.getNumericValue(input.charAt(1));
+			board[x][y] = player.getSymbol();
+			player.setX(x);
+			player.setY(y);
+			if(player.getSymbol() == 'X') {
+				setTurn(1);
+			}else {
+				setTurn(0);
+			}
+				return true;
+		} catch (Exception e) {
+			System.out.println("Error");
+			return false;
+		}
+	}
+
+	public Board getDeepCopy() {
+		Board copy = new Board();
+		copy.board = new char[8][8];
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				copy.board[i][j] = board[i][j];
+			}
+		}
+		copy.match = this.match;
+		copy.opponentMoves = new String[32];
+		copy.computerMoves = new String[32];
+		copy.opponentMoves = this.opponentMoves;
+		copy.computerMoves = this.computerMoves;
+		copy.first = this.first;
+		copy.turns = this.turns;
+		copy.turn = this.turn;
+		return copy;
+	}
+
 	@Override
 	public String toString() {
 		String str = "  1 2 3 4 5 6 7 8     " + match;
 		int letter = 65;
 		int turn = 0;
+		if (turns > 7) {
+			turn = turns - 7;
+		}
 		for (int j = 0; j < 8; j++, letter++, turn++) {
 			str += (char) letter + " ";
 			for (int i = 0; i < 8; i++) {
@@ -81,6 +140,7 @@ public class Board {
 					str += "- ";
 				}
 			}
+
 			str += "     " + (turn + 1) + ": ";
 			str += (first == 'C' || first == 'c') ? computerMoves[turn] + "   " + opponentMoves[turn]
 					: opponentMoves[turn] + "   " + computerMoves[turn];

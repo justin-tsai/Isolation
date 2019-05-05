@@ -26,77 +26,119 @@ public class Game {
 		if (first == 'C' || first == 'c') {
 			/* If they both have moves, cycle between both. */
 			while (computerHasMoves || opponentHasMoves) {
-				computerHasMoves = moveOPPONENT2();
-				/* If computer makes a move that blocks the opponent, game is over. */
-				if(computerHasMoves) {
+				calculate();
+				if (!X.hasMoves()) {
+					computerHasMoves = false;
 					break;
+				} else if (!O.hasMoves()){
+					opponentHasMoves = false;
+					break;
+				}else {
+					computerHasMoves = moveCOMPUTER();
 				}
-				opponentHasMoves = moveOPPONENT();
+				/* If computer makes a move that blocks the opponent, game is over. */
+				calculate();
+				if (!O.hasMoves()) {
+					opponentHasMoves = false;
+					break;
+				} else if (!X.hasMoves()) {
+					computerHasMoves = false;
+					break;
+				} else {
+					opponentHasMoves = moveOPPONENT();
+				}
+				board.nextTurn();
 			}
-		/* Opponent goes first */
+			/* Opponent goes first */
 		} else if (first == 'O' || first == 'o') {
 			/* If they both have moves, cycle between both. */
 			while (computerHasMoves || opponentHasMoves) {
-				opponentHasMoves = moveOPPONENT();
-				/* If opponent makes a move that blocks the computer, game is over. */
-				if(opponentHasMoves) {
+				calculate();
+				if (!O.hasMoves()) {
+					opponentHasMoves = false;
 					break;
+				} else if (!X.hasMoves()) {
+					computerHasMoves = false;
+					break;
+				} else {
+					opponentHasMoves = moveOPPONENT();
 				}
-				computerHasMoves = moveOPPONENT2();
+				/* If opponent makes a move that blocks the computer, game is over. */
+				calculate();
+				if (!X.hasMoves()) {
+					computerHasMoves = false;
+					break;
+				} else if (!O.hasMoves()) {
+					opponentHasMoves = false;
+					break;
+				} else {
+					computerHasMoves = moveCOMPUTER();
+				}
+				board.nextTurn();
 			}
 		} else {
 			System.out.println("Error with determining who goes first");
 		}
 		/* If one team cannot make a move, the other team wins. */
-		if(!computerHasMoves) {
+		if (!computerHasMoves) {
 			System.out.println("Opponent wins!");
-		}else {
+		} else {
 			System.out.println("Computer wins!");
 		}
 	}
 
-	
+	/* Opponent move function */
 	public boolean moveOPPONENT() {
-		O.calculate(board);
+		/* Opponent has at least one move they can make */
 		if (O.hasMoves()) {
 			System.out.print("\nEnter opponent's move: ");
 			String move = keyboard.nextLine();
+			/* Valid input, successful move */
 			if (board.move(O, move) == true) {
 				System.out.println(board.toString());
-				return false;
+				board.setTurn(0);
+				return true;
+				/* Invalid input and/or move */
 			} else {
 				System.out.println(board.toString());
 				moveOPPONENT();
-				return false;
+				return true;
 			}
+			/* Opponent can't make a move. */
 		} else {
-			return true;
+			return false;
 		}
 	}
-	
-	/*Test function to play against self */
+
+	/* Test function to play against self */
 	public boolean moveOPPONENT2() {
-		X.calculate(board);
 		if (X.hasMoves()) {
 			System.out.print("\nEnter computer's move: ");
 			String move = keyboard.nextLine();
 			if (board.move(X, move) == true) {
 				System.out.println(board.toString());
-				return false;
+				return true;
 			} else {
 				System.out.println(board.toString());
 				moveOPPONENT2();
-				return false;
+				return true;
 			}
 		} else {
-			return true;
+			return false;
 		}
+	}
+
+	public void calculate() {
+		X.calculate(board);
+		O.calculate(board);
 	}
 
 	/* To do */
 	public boolean moveCOMPUTER() {
-		X.calculate(board);
+		AlphaBeta.AlphaBeta(board, X, O, -999, 999, 0);
+		System.out.println("Opponent moved: ");
 		System.out.println(board.toString());
-		return false;
+		board.setTurn(1);
+		return true;
 	}
 }
