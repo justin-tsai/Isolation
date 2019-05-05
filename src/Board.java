@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Board {
 
 	private char[][] board;
@@ -6,8 +8,12 @@ public class Board {
 	private String[] computerMoves;
 	private char first;
 	public int turns;
-	private int turn;
-
+	private int turn;	
+	
+	public String[] getComputerMove() {
+		return computerMoves;		
+	}
+	
 	public Board(char first) {
 		board = new char[8][8];
 		for (int i = 0; i < 8; i++) {
@@ -85,7 +91,7 @@ public class Board {
 		char symbol = player.getSymbol();
 		int x = Character.getNumericValue(input.charAt(0));
 		int y = Character.getNumericValue(input.charAt(1));
-		String move = (char)(x+58) + Integer.toString(y+8);
+		String move = (char)(y+65) + Integer.toString(x+1);
 		if (player.canMove(input)) {
 			board[x][y] = symbol;
 			board[player.getX()][player.getY()] = '#';

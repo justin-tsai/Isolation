@@ -188,6 +188,7 @@ public class Player {
 		Player temp2 = getDeepCopy();
 		temp.move2(temp2, move);
 		temp2.calculate(temp);
+		System.out.println("value:  " + temp2.getNumMovesAvailable());
 		return temp2.getNumMovesAvailable();
 	}
 	
