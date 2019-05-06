@@ -1,30 +1,35 @@
-
+/**
+ * Node to representing nodes for Alpha Beta.
+ * @author Justin
+ *
+ */
 public class Node {
-	private Board b;
-	private int n;
+	
+	private Board board;
+	private int value;
 	
 	public Node() {
 		
 	}
 	
-	public Node(Board b, int n) {
-		this.b = b;
-		this.n = n;
+	public Node(Board board, int value) {
+		this.board = board;
+		this.value = value;
 	}
 	
-	public void setBoard(Board b) {
-		this.b = b;
+	public void setBoard(Board board) {
+		this.board = board;
 	}
 	
 	public Board getBoard() {
-		return b;
+		return board;
 	}
 	
-	public void setN(int n) {
-		this.n = n;
+	public void setValue(int value) {
+		this.value = value;
 	}
 	
-	public int getN() {
-		return n;
+	public int getValue() {
+		return value;
 	}
 }
