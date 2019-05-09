@@ -1,28 +1,19 @@
-/**
- * Game represents the game that the players will be playing.
- * @author Justin
- *
- */
-
 import java.util.Scanner;
 
 public class Game {
 
 	private Board board;
 	private char first;
+	private int timeLimit;
 	private Player computer;
 	private Player opponent;
 	public static Scanner keyboard;
 	private AlphaBeta ab;
+	private char computerSymbol;
 
-	/**
-	 * Creates a new game.
-	 * @param first				The player that is going first.
-	 * @param computerSymbol	The symbol that the AI will be playing as (Either X or O).
-	 * @param timeLimit			The maximum amount of the time the AI is given to make a move.
-	 */
 	public Game(char first, char computerSymbol, int timeLimit) {
 		this.first = first;
+		this.timeLimit = timeLimit;
 		board = new Board(first, computerSymbol);
 		if (computerSymbol == 'X' || computerSymbol == 'x') {
 			computer = new Player(0, 0, 'X');
@@ -33,11 +24,9 @@ public class Game {
 		}
 		keyboard = new Scanner(System.in);
 		ab = new AlphaBeta(timeLimit);
+		this.computerSymbol = computerSymbol;
 	}
 
-	/**
-	 * Starts the game. Loops between the computer and the opponent until the game has a winner.
-	 */
 	public void start() {
 		System.out.println("Game start!\n\n" + board.toString());
 		boolean opponentHasMoves = true;
@@ -107,17 +96,14 @@ public class Game {
 		}
 	}
 
-	/**
-	 * Move function for the opponent.
-	 * @return  Whether or not the opponent has a move that they can make.
-	 */
+	/* Opponent move function */
 	public boolean moveOPPONENT() {
 		/* Opponent has at least one move they can make */
 		if (opponent.hasMoves()) {
 			System.out.print("\nEnter opponent's move: ");
 			String move = keyboard.nextLine();
 			/* Valid input, successful move */
-			if (board.letterInputMove(opponent, move) == true) {
+			if (board.move(opponent, move) == true) {
 				System.out.println(board.toString());
 				board.setTurn(0);
 				return true;
@@ -133,27 +119,38 @@ public class Game {
 		}
 	}
 
-	/**
-	 * Calculates the available moves for both the computer and the opponent.
-	 */
+	/* Test function to play against self */
+	public boolean moveOPPONENT2() {
+		if (computer.hasMoves()) {
+			System.out.print("\nEnter computer's move: ");
+			String move = keyboard.nextLine();
+			if (board.move(computer, move) == true) {
+				System.out.println(board.toString());
+				return true;
+			} else {
+				System.out.println(board.toString());
+				moveOPPONENT2();
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+
 	public void calculate() {
 		computer.calculate(board);
 		opponent.calculate(board);
 	}
 
-	/**
-	 * Move function for the computer. Utilizes alpha beta search to decide where to move.
-	 */
+	/* To do */
 	public boolean moveCOMPUTER() {
-		if (!board.letterInputMove(computer, ab.alphaBetaSearch(computer, opponent, board))) {
-			/* Default move if alpha beta is unable to find a move. */
-			board.numInputMove(computer, computer.getMoves().get(0));
+		if (!board.move(computer, ab.alphaBetaSearch(computer, opponent, board))) {
+			// Default move
+			board.move2(computer, computer.getMoves().get(0));
 		}
 		System.out.println(board.toString());
+		
 		System.out.println("Computer moved to: " + board.getComputerMove()[computer.getNumMovesMade() - 1]);
-		System.out.println("Opponent moved: ");
-		System.out.println(board.toString());
-
 		board.setTurn(1);
 		return true;
 	}

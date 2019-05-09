@@ -1,10 +1,5 @@
-/**
- * Player represents a player of the game. Each board will have two.
- * @author Justin
- *
- */
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
 
@@ -14,19 +9,10 @@ public class Player {
 	private char symbol;
 	private ArrayList<String> moves = new ArrayList<String>();
 	
-	/**
-	 * Empty player constructor for purpose of deep copy.
-	 */
 	public Player() {
 		
 	}
 	
-	/**
-	 * Player constructor.
-	 * @param x			X-coordinate of the Player.
-	 * @param y			Y-coordinate of the Player.
-	 * @param symbol	Symbol that the Player is representing (Either X or O).
-	 */
 	public Player(int x, int y, char symbol) {
 		this.x = x;
 		this.y = y;
@@ -34,10 +20,6 @@ public class Player {
 		numMovesMade = 0;
 	}
 	
-	/**
-	 * Returns a deep copy of the Player.
-	 * @return		Duplicate player object with the same values.
-	 */
 	public Player getDeepCopy() {
 		Player copy = new Player();
 		copy.numMovesMade = this.numMovesMade;
@@ -50,60 +32,34 @@ public class Player {
 		return copy;
 	}
 	
-	/**
-	 * Sets the position of the Player.
-	 * @param x		The X-coordinate the Player is at.
-	 * @param y		The Y-coordinate the Player is at.
-	 */
-	public void setPosition(int x, int y) {
+	public void setX(int x) {
 		this.x = x;
+	}
+	
+	public void setY(int y) {
 		this.y = y;
 	}
 	
-	/**
-	 * Getter method the X-coordinate the Player is at.
-	 * @return		The X-coordinate the Player is at.
-	 */
 	public int getX() {
 		return this.x;
 	}
 	
-	/**
-	 * Getter method for the Y-coordinate the Player is at.
-	 * @return		The Y-coordinate the Player is at.
-	 */
 	public int getY() {
 		return this.y;
 	}
 	
-	/**
-	 * Getter method for the symbol the Player is representing.
-	 * @return		The symbol that the Player is representing (Either X or O).
-	 */
 	public char getSymbol() {
 		return this.symbol;
 	}
 	
-	/**
-	 * Increment the number of moves made by the Player.
-	 */
 	public void moveMade() {
 		numMovesMade++;
 	}
 	
-	/**
-	 * Getter method for the number of moves made by the Player.
-	 * @return		The number of moves made by the Player.
-	 */
 	public int getNumMovesMade() {
 		return numMovesMade;
 	}
 	
-	/**
-	 * Whether or not the Player can move to the space passed as the argument.
-	 * @param move		The coordinates that the Player wants to move to.
-	 * @return			Whether or not the Player is able to move there.
-	 */
 	public boolean canMove(String move) {
 		if(moves.contains(move)) {
 			return true;
@@ -111,10 +67,6 @@ public class Player {
 		return false;
 	}
 	
-	/**
-	 * Returns whether or not the Player has moves that they can make.
-	 * @return		Whether or not the Player has a move they can make.
-	 */
 	public boolean hasMoves() {
 		if(moves.isEmpty()){
 			return false;
@@ -123,10 +75,6 @@ public class Player {
 		}
 	}
 	
-	/**
-	 * Calculates the possible moves that the Player can make given the current board state.
-	 * @param board		The current board state.
-	 */
 	public void calculate(Board board) {
 		moves.clear();
 		char[][] boardState = board.getBoardState();
@@ -234,19 +182,19 @@ public class Player {
 			}
 		}
 	}
-
-	/**
-	 * Getter method for the number of moves available that the player can make.
-	 * @return		The number of moves available.
-	 */
+	
+	public int getValue(Board board, String move) {
+		Board temp = board.getDeepCopy();
+		Player temp2 = getDeepCopy();
+		temp.move2(temp2, move);
+		temp2.calculate(temp);
+		return temp2.getNumMovesAvailable();
+	}
+	
 	public int getNumMovesAvailable() {
 		return moves.size();
 	}
 	
-	/**
-	 * Getter method for the moveset of available moves that the player can make.
-	 * @return		The whole moveset.
-	 */
 	public ArrayList<String> getMoves(){
 		return moves;
 	}
