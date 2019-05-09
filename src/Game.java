@@ -145,12 +145,18 @@ public class Game {
 	 * Move function for the computer. Utilizes alpha beta search to decide where to move.
 	 */
 	public boolean moveCOMPUTER() {
+<<<<<<< HEAD
 		if (!board.letterInputMove(computer, ab.alphaBetaSearch(computer, opponent, board))) {
 			/* Default move if alpha beta is unable to find a move. */
 			board.numInputMove(computer, computer.getMoves().get(0));
 		}
 		System.out.println(board.toString());
 		System.out.println("Computer moved to: " + board.getComputerMove()[computer.getNumMovesMade() - 1]);
+=======
+		board.move(X, ab.alphaBetaSearch(X, O, board));
+		System.out.println("Opponent moved: ");
+		System.out.println(board.toString());
+>>>>>>> parent of fe609a1... Fixed printouts, got rid of clutter
 		board.setTurn(1);
 		return true;
 	}
