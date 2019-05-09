@@ -39,15 +39,10 @@ public class AlphaBeta {
 			best = max(computer, opponent, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
 		}
 		Board bestBoard = best.getBoard();
-<<<<<<< HEAD
 		String bestMove = bestBoard.getComputerMove()[turns];
 		turns++;
-=======
 		System.out.println("best board: \n" + bestBoard);
-		String bestMove =  bestBoard.getComputerMove()[turns];
-		turns++;
 		System.out.println("move to" + bestMove);
->>>>>>> parent of fe609a1... Fixed printouts, got rid of clutter
 		return bestMove;
 	}
 
