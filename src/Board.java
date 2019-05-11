@@ -102,7 +102,6 @@ public class Board {
 		int y = Character.getNumericValue(input.charAt(1));
 		char letter = (char) (y + 65);
 		String move = letter + Integer.toString(x+1);
-		//System.out.println("move: " + move);
 		if (player.canMove(input)) {
 			board[x][y] = symbol;
 			board[player.getX()][player.getY()] = '#';
@@ -116,6 +115,11 @@ public class Board {
 			player.moveMade();
 			return true;
 		} else {
+			System.out.println("Board: \n" + this.toString());
+			System.out.print(symbol + " can move to: " );
+			for (String str : player.getMoves()) {
+				System.out.print(str + ",");
+			}
 			System.out.println("input: " + input);
 			System.out.println("Cannot move there!");
 			return false;

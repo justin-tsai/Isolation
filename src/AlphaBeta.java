@@ -5,10 +5,7 @@ public class AlphaBeta {
 	private int timeLimit;
 	private long startTime;
 	private long currTime;
-	private int depthLimit = 1;
-	private int MAX = 1000;
-	private int MIN = -1000;
-	private Board finalB;
+	private int depthLimit = 10;
 	private int turns;
 
 	public AlphaBeta(int timeLimit) {
@@ -17,75 +14,62 @@ public class AlphaBeta {
 	}
 
 	public String alphaBetaSearch(Player computer, Player opponent, Board board) {
-		startTime = System.nanoTime();
 		Node best = new Node();
-		// Created this conditional to switch X and O players
+		startTime = System.nanoTime();
 		best = max(computer, opponent, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
-		while (currTime < (timeLimit * 1000)) {
-			depthLimit++;
-			best = max(computer, opponent, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
-		}
-
-		/**
-		 * Node best = max(X, O, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0); while
-		 * (currTime < (timeLimit * 1000)) { depthLimit++; best = max(X, O, board,
-		 * Integer.MIN_VALUE, Integer.MAX_VALUE, 0); }
-		 */
-
-		// default:
-
 		Board bestBoard = best.getBoard();
 		String bestMove = bestBoard.getComputerMove()[turns];
+		System.out.println("Best MAX: " + bestMove);
+		System.out.println("Best MAX board: " + bestBoard.toString());
+		System.out.println("Best MAX value: " + best.getValue());
+		System.out.println(bestBoard.toString());
 		turns++;
 		return bestMove;
 	}
 
-	public Node max(Player computer, Player opponent, Board board, int alpha, int beta, int depth) {
+	public Node max(Player computer, Player opponent, Board board, double alpha, double beta, int depth) {
 		currTime = (System.nanoTime() - startTime) / 1000000;
-		if (depth > depthLimit || currTime > (timeLimit * 1000) || computer.hasMoves() == false) {
-			return utility(board, computer, depth);
+		if (currTime > (timeLimit * 1000)) {
+			return utility(board, computer, opponent, depth, true);
+		} else if (depth > depthLimit || computer.hasMoves() == false) {
+			return utility(board, computer, opponent, depth, false);
 		}
-		if(computer.getNumMovesAvailable() < 3) {
-			return utility(board, computer, depth);
-		}
+		computer.calculate(board);
 		int value = Integer.MIN_VALUE;
 		Node node = new Node(board, value);
 		Iterator<String> itr = computer.getMoves().iterator();
 		while (itr.hasNext()) {
 			String move = itr.next();
 			Player xTemp = computer.getDeepCopy();
-			Player oTemp = opponent.getDeepCopy();
 			Board temp = board.getDeepCopy();
 			xTemp.calculate(temp);
-			oTemp.calculate(temp);
 			temp.move2(xTemp, move);
 			xTemp.calculate(temp);
-			oTemp.calculate(temp);
-			Node min = min(xTemp, oTemp, temp, alpha, beta, depth + 1);
-			if (min.getN() > node.getN()) {
+			Node min = min(xTemp, opponent, temp, alpha, beta, depth + 1);
+			if (min.getValue() > node.getValue()) {
 				node = min;
 			}
-			if (node.getN() >= beta) {
+			if (node.getValue() >= beta) {
 				// System.out.println("v: " + value);
 				return node;
 			}
 
-			if (node.getN() > alpha) {
-				alpha = node.getN();
+			if (node.getValue() > alpha) {
+				alpha = node.getValue();
 			}
 		}
 		return node;
 
 	}
 
-	public Node min(Player computer, Player opponent, Board board, int alpha, int beta, int depth) {
+	public Node min(Player computer, Player opponent, Board board, double alpha, double beta, int depth) {
 		currTime = (System.nanoTime() - startTime) / 1000000;
-		if (depth > depthLimit || currTime > (timeLimit * 1000) || opponent.hasMoves() == false) {
-			return utility(board, opponent, depth);
+		if (currTime > (timeLimit * 1000)) {
+			return utility(board, opponent, computer, depth, true);
+		} else if (depth > depthLimit || opponent.hasMoves() == false) {
+			return utility(board, opponent, computer, depth, false);
 		}
-		if(opponent.getNumMovesAvailable() < 3) {
-			return utility(board, opponent, depth);
-		}
+		opponent.calculate(board);
 		int value = Integer.MAX_VALUE;
 		Node node = new Node(board, value);
 		Iterator<String> itr = opponent.getMoves().iterator();
@@ -93,40 +77,38 @@ public class AlphaBeta {
 			String move = itr.next();
 			Board temp = board.getDeepCopy();
 			Player oTemp = opponent.getDeepCopy();
-			Player xTemp = computer.getDeepCopy();
-			xTemp.calculate(temp);
 			oTemp.calculate(temp);
 			temp.move2(oTemp, move);
-			xTemp.calculate(temp);
 			oTemp.calculate(temp);
-			Node max = max(xTemp, oTemp, temp, alpha, beta, depth + 1);
-			if (max.getN() < node.getN()) {
+			Node max = max(computer, oTemp, temp, alpha, beta, depth + 1);
+			if (max.getValue() < node.getValue()) {
 				node = max;
 			}
-			if (node.getN() <= alpha) {
+			if (node.getValue() <= alpha) {
 				// System.out.println("v: " + value);
 				return node;
 			}
 
-			if (node.getN() < beta) {
-				beta = node.getN();
+			if (node.getValue() < beta) {
+				beta = node.getValue();
 			}
 		}
 		return node;
 
 	}
 
-	public Node utility(Board board, Player player, int depth) {
-		int value;
+	public Node utility(Board board, Player player, Player player2, int depth, boolean timeout) {
+		double value;
 		player.calculate(board);
-		if (!player.hasMoves()) {
+		player2.calculate(board);
+		if (!player.hasMoves() || timeout) {
 			value = (player.getSymbol() == 'X') ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+		} else if (!player2.hasMoves()) {
+			value = (player.getSymbol() == 'X') ? Integer.MAX_VALUE : Integer.MIN_VALUE;
 		} else {
-			value = (player.getSymbol() == 'O') ? -player.getNumMovesAvailable() + depth
-					: player.getNumMovesAvailable() - depth;
-			finalB = board;
+			value = (player.getSymbol() == 'O') ? -player.getNumMovesAvailable() + (10 / player2.getNumMovesAvailable())
+					: player.getNumMovesAvailable() - (10 / player2.getNumMovesAvailable());
 		}
-		// System.out.println("Utility Value: " + value);
 		Node node = new Node(board, value);
 		return node;
 	}
