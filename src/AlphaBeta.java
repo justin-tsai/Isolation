@@ -3,10 +3,10 @@ import java.util.Iterator;
 public class AlphaBeta {
 
 	private int timeLimit;
-	private long startTime;
-	private long currTime;
-	private int depthLimit = 10;
+	private int depthLimit = 1;
 	private int turns;
+	private long startTime = System.nanoTime();
+	private long currTime = System.nanoTime();
 
 	public AlphaBeta(int timeLimit) {
 		this.timeLimit = timeLimit;
@@ -14,14 +14,22 @@ public class AlphaBeta {
 	}
 
 	public String alphaBetaSearch(Player computer, Player opponent, Board board) {
-		Node best = new Node();
 		startTime = System.nanoTime();
-		best = max(computer, opponent, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+		currTime = 0;
+		Node best = new Node();
+		Node currBest = new Node();
+		startTime = System.nanoTime();
+		depthLimit = 1;
+
+		while (currTime < (timeLimit * 1000)) {
+			currBest = max(computer, opponent, board, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+			if (currBest.successfulRun()) {
+				best = currBest;
+			}
+			depthLimit = depthLimit + 2;
+		}
 		Board bestBoard = best.getBoard();
 		String bestMove = bestBoard.getComputerMove()[turns];
-		System.out.println("Best MAX: " + bestMove);
-		System.out.println("Best MAX board: " + bestBoard.toString());
-		System.out.println("Best MAX value: " + best.getValue());
 		System.out.println(bestBoard.toString());
 		turns++;
 		return bestMove;
@@ -34,9 +42,10 @@ public class AlphaBeta {
 		} else if (depth > depthLimit || computer.hasMoves() == false) {
 			return utility(board, computer, opponent, depth, false);
 		}
+		opponent.calculate(board);
 		computer.calculate(board);
 		int value = Integer.MIN_VALUE;
-		Node node = new Node(board, value);
+		Node node = new Node(board, value, true);
 		Iterator<String> itr = computer.getMoves().iterator();
 		while (itr.hasNext()) {
 			String move = itr.next();
@@ -51,12 +60,19 @@ public class AlphaBeta {
 			}
 			if (node.getValue() >= beta) {
 				// System.out.println("v: " + value);
+				if (currTime > (timeLimit * 1000)) {
+					node.setSuccess(false);
+				}
 				return node;
 			}
 
 			if (node.getValue() > alpha) {
 				alpha = node.getValue();
 			}
+		}
+		currTime = (System.nanoTime() - startTime) / 1000000;
+		if (currTime > (timeLimit * 1000)) {
+			node.setSuccess(false);
 		}
 		return node;
 
@@ -70,8 +86,9 @@ public class AlphaBeta {
 			return utility(board, opponent, computer, depth, false);
 		}
 		opponent.calculate(board);
+		computer.calculate(board);
 		int value = Integer.MAX_VALUE;
-		Node node = new Node(board, value);
+		Node node = new Node(board, value, true);
 		Iterator<String> itr = opponent.getMoves().iterator();
 		while (itr.hasNext()) {
 			String move = itr.next();
@@ -85,7 +102,9 @@ public class AlphaBeta {
 				node = max;
 			}
 			if (node.getValue() <= alpha) {
-				// System.out.println("v: " + value);
+				if (currTime > (timeLimit * 1000)) {
+					node.setSuccess(false);
+				}
 				return node;
 			}
 
@@ -93,23 +112,34 @@ public class AlphaBeta {
 				beta = node.getValue();
 			}
 		}
+		currTime = (System.nanoTime() - startTime) / 1000000;
+		if (currTime > (timeLimit * 1000)) {
+			node.setSuccess(false);
+		}
 		return node;
 
 	}
 
 	public Node utility(Board board, Player player, Player player2, int depth, boolean timeout) {
 		double value;
+		boolean success;
 		player.calculate(board);
 		player2.calculate(board);
-		if (!player.hasMoves() || timeout) {
-			value = (player.getSymbol() == 'X') ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+		if (timeout) {
+			value = (player.isComputer()) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+			success = false;
+		} else if (!player.hasMoves()) {
+			value = (player.isComputer()) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+			success = true;
 		} else if (!player2.hasMoves()) {
-			value = (player.getSymbol() == 'X') ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+			value = (player.isComputer()) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+			success = true;
 		} else {
-			value = (player.getSymbol() == 'O') ? -player.getNumMovesAvailable() + (10 / player2.getNumMovesAvailable())
-					: player.getNumMovesAvailable() - (10 / player2.getNumMovesAvailable());
+			value = (player.isComputer()) ?
+					30 - player2.getNumMovesAvailable() : player2.getNumMovesAvailable() - 30;
+			success = true;
 		}
-		Node node = new Node(board, value);
+		Node node = new Node(board, value, success);
 		return node;
 	}
 }

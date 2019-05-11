@@ -8,16 +8,18 @@ public class Player {
 	private int y;
 	private char symbol;
 	private ArrayList<String> moves = new ArrayList<String>();
+	private boolean computer;
 
 	public Player() {
 
 	}
 
-	public Player(int x, int y, char symbol) {
+	public Player(int x, int y, char symbol, boolean computer) {
 		this.x = x;
 		this.y = y;
 		this.symbol = symbol;
 		numMovesMade = 0;
+		this.computer = computer;
 	}
 
 	public Player getDeepCopy() {
@@ -29,6 +31,7 @@ public class Player {
 		for (String str : moves) {
 			copy.moves.add(str);
 		}
+		copy.computer = this.computer;
 		return copy;
 	}
 
@@ -56,6 +59,10 @@ public class Player {
 		numMovesMade++;
 	}
 
+	public boolean isComputer() {
+		return this.computer;
+	}
+	
 	public int getNumMovesMade() {
 		return numMovesMade;
 	}
@@ -91,7 +98,20 @@ public class Player {
 				break;
 			}
 		}
-
+		// N
+		tempX = x;
+		tempY = y - 1;
+		while (tempY >= 0) {
+			if (boardState[tempX][tempY] == '-') {
+				String move = Integer.toString(tempX) + Integer.toString(tempY);
+				moves.add(move);
+				tempY--;
+			} else {
+				break;
+			}
+		}
+		
+		
 		// SW
 		tempX = x - 1;
 		tempY = y + 1;
@@ -142,18 +162,6 @@ public class Player {
 				String move = Integer.toString(tempX) + Integer.toString(tempY);
 				moves.add(move);
 				tempY++;
-			} else {
-				break;
-			}
-		}
-		// N
-		tempX = x;
-		tempY = y - 1;
-		while (tempY >= 0) {
-			if (boardState[tempX][tempY] == '-') {
-				String move = Integer.toString(tempX) + Integer.toString(tempY);
-				moves.add(move);
-				tempY--;
 			} else {
 				break;
 			}

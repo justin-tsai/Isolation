@@ -16,11 +16,11 @@ public class Game {
 		this.timeLimit = timeLimit;
 		board = new Board(first, computerSymbol);
 		if (computerSymbol == 'X' || computerSymbol == 'x') {
-			computer = new Player(0, 0, 'X');
-			opponent = new Player(7, 7, 'O');
+			computer = new Player(0, 0, 'X', true);
+			opponent = new Player(7, 7, 'O', false);
 		} else {
-			computer = new Player(7, 7, 'O');
-			opponent = new Player(0, 0, 'X');
+			computer = new Player(7, 7, 'O', true);
+			opponent = new Player(0, 0, 'X', false);
 		}
 		keyboard = new Scanner(System.in);
 		ab = new AlphaBeta(timeLimit);
