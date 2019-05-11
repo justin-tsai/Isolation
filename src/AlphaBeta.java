@@ -45,7 +45,6 @@ public class AlphaBeta {
 		}
 		Board bestBoard = best.getBoard();
 		String bestMove = bestBoard.getComputerMove()[turns];
-		System.out.println(bestBoard.toString());
 		turns++;
 		return bestMove;
 	}
