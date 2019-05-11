@@ -1,5 +1,10 @@
+/**
+ * Player represents a player of the Game.
+ * @author Justin
+ *
+ */
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class Player {
 
@@ -10,10 +15,20 @@ public class Player {
 	private ArrayList<String> moves = new ArrayList<String>();
 	private boolean computer;
 
+	/**
+	 * Empty constructor.
+	 */
 	public Player() {
 
 	}
 
+	/**
+	 * Constructor for a Player object.
+	 * @param x			The x position of the player.
+	 * @param y			The y position of the player.
+	 * @param symbol	The symbol the Player is respresenting (O or X)
+	 * @param computer	Whether or not the player is a computer.
+	 */
 	public Player(int x, int y, char symbol, boolean computer) {
 		this.x = x;
 		this.y = y;
@@ -22,6 +37,10 @@ public class Player {
 		this.computer = computer;
 	}
 
+	/**
+	 * Returns a deep copy of the player.
+	 * @return	Duplicate Player object with the same values.
+	 */
 	public Player getDeepCopy() {
 		Player copy = new Player();
 		copy.numMovesMade = this.numMovesMade;
@@ -35,38 +54,63 @@ public class Player {
 		return copy;
 	}
 
-	public void setX(int x) {
+	/**
+	 * Set the current position of the player.
+	 * @param x		Current x position.
+	 * @param y		Current y position.
+	 */
+	public void setPosition(int x, int y) {
 		this.x = x;
-	}
-
-	public void setY(int y) {
 		this.y = y;
 	}
 
+	/**
+	 * @return Returns the current X position of the player.
+	 */
 	public int getX() {
 		return this.x;
 	}
 
+	/**
+	 * @return Returns the current Y position of the player.
+	 */
 	public int getY() {
 		return this.y;
 	}
 
+	/**
+	 * @return Returns the symbol of the player.
+	 */
 	public char getSymbol() {
 		return this.symbol;
 	}
 
+	/**
+	 * Increments the number of moves made by the player.
+	 */
 	public void moveMade() {
 		numMovesMade++;
 	}
 
+	/**
+	 * @return Returns whether or not the player is a computer.
+	 */
 	public boolean isComputer() {
 		return this.computer;
 	}
 	
+	/**
+	 * @return Returns the number of moves made by the player.
+	 */
 	public int getNumMovesMade() {
 		return numMovesMade;
 	}
 
+	/**
+	 * @param move	The move input being tested.
+	 * @return 		Returns whether or not the player can move to the move input
+	 * 
+	 */
 	public boolean canMove(String move) {
 		if (moves.contains(move)) {
 			return true;
@@ -74,6 +118,9 @@ public class Player {
 		return false;
 	}
 
+	/**
+	 * @return	 Whether or not the player has moves they can make.	
+	 */
 	public boolean hasMoves() {
 		if (moves.isEmpty()) {
 			return false;
@@ -82,6 +129,10 @@ public class Player {
 		}
 	}
 
+	/**
+	 * Calculate the possible moves the player can make and stores into ArrayList.
+	 * @param board		The current board state.
+	 */
 	public void calculate(Board board) {
 		moves.clear();
 		char[][] boardState = board.getBoardState();
@@ -194,18 +245,17 @@ public class Player {
 		}
 	}
 
-	public int getValue(Board board, String move) {
-		Board temp = board.getDeepCopy();
-		Player temp2 = getDeepCopy();
-		temp.move2(temp2, move);
-		temp2.calculate(temp);
-		return temp2.getNumMovesAvailable();
-	}
 
+	/**
+	 * @return The number of moves available that the player can make.
+	 */
 	public int getNumMovesAvailable() {
 		return moves.size();
 	}
 
+	/**
+	 * @return The current moveset that the player can move to.
+	 */
 	public ArrayList<String> getMoves() {
 		return moves;
 	}

@@ -1,13 +1,20 @@
-
+/**
+ * The Node class represents nodes for Alpha Beta pruning.
+ * @author Justin
+ *
+ */
 public class Node {
 	private Board board;
 	private double value;
 	private boolean success;
 	
+	/**
+	 * Empty constructor.
+	 */
 	public Node() {
 		
 	}
-	
+
 	public Node(Board board, double value, boolean success) {
 		this.board = board;
 		this.value = value;
