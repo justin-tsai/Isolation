@@ -117,6 +117,7 @@ public class Game {
 			System.out.print("\nEnter opponent's move: ");
 			String move = keyboard.nextLine();
 			/* Valid input, successful move */
+			move = move.toUpperCase();
 			if (board.move(opponent, move) == true) {
 				System.out.println(board.toString());
 				return true;

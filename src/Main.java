@@ -26,6 +26,7 @@ public class Main {
 				System.out.print("Who goes first, C for computer, O for opponent: ");
 				first = keyboard.next().charAt(0);
 				if (first == 'C' || first == 'O' || first == 'c' || first == 'o') {
+					first = Character.toUpperCase(first);
 					validInput = true;
 				} else {
 					throw new Exception();
@@ -43,6 +44,7 @@ public class Main {
 				System.out.print("Is computer X or O?: ");
 				computerSymbol = keyboard.next().charAt(0);
 				if (computerSymbol == 'X' || computerSymbol == 'x' || computerSymbol == 'O' || computerSymbol == 'o') {
+					computerSymbol = Character.toUpperCase(computerSymbol);
 					validInput = true;
 				} else {
 					throw new Exception();
