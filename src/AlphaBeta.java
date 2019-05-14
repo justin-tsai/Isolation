@@ -1,6 +1,8 @@
 import java.util.Iterator;
+
 /**
  * Alpha Beta search with iterative deepening and time limit.
+ * 
  * @author Justin
  *
  */
@@ -11,10 +13,12 @@ public class AlphaBeta {
 	private int turns;
 	private long startTime;
 	private long currTime;
-	
+
 	/**
 	 * Constructor for AlphaBeta
-	 * @param timeLimit		The maximum amount of seconds that AlphaBeta has to find a best move.
+	 * 
+	 * @param timeLimit The maximum amount of seconds that AlphaBeta has to find a
+	 *                  best move.
 	 */
 	public AlphaBeta(int timeLimit) {
 		this.timeLimit = timeLimit;
@@ -22,11 +26,13 @@ public class AlphaBeta {
 	}
 
 	/**
-	 * Searches for the best move the computer can make using Alpha Beta and iterative deepening.
-	 * @param computer		The player that the computer is representing.
-	 * @param opponent		The player that the opponent is representing.
-	 * @param board			The current board state.
-	 * @return				The best move that the computer can make.
+	 * Searches for the best move the computer can make using Alpha Beta and
+	 * iterative deepening.
+	 * 
+	 * @param computer The player that the computer is representing.
+	 * @param opponent The player that the opponent is representing.
+	 * @param board    The current board state.
+	 * @return The best move that the computer can make.
 	 */
 	public String alphaBetaSearch(Player computer, Player opponent, Board board) {
 		startTime = System.nanoTime();
@@ -50,14 +56,15 @@ public class AlphaBeta {
 	}
 
 	/**
-	 * The function to find the best MAX for Alpha Beta using its utility value. 
-	 * @param computer		The player that the computer is representing.
-	 * @param opponent		The player that the opponent is representing.
-	 * @param board			The current state of the board.
-	 * @param alpha			The current best alpha.
-	 * @param beta			The current best beta.
-	 * @param depth			The current depth the search is at.
-	 * @return				The best MAX node with its utility value.
+	 * The function to find the best MAX for Alpha Beta using its utility value.
+	 * 
+	 * @param computer The player that the computer is representing.
+	 * @param opponent The player that the opponent is representing.
+	 * @param board    The current state of the board.
+	 * @param alpha    The current best alpha.
+	 * @param beta     The current best beta.
+	 * @param depth    The current depth the search is at.
+	 * @return The best MAX node with its utility value.
 	 */
 	public Node max(Player computer, Player opponent, Board board, double alpha, double beta, int depth) {
 		currTime = (System.nanoTime() - startTime) / 1000000;
@@ -103,14 +110,15 @@ public class AlphaBeta {
 	}
 
 	/**
-	 * The function to find the best MIN for Alpha Beta using its utility value. 
-	 * @param computer		The player that the computer is representing.
-	 * @param opponent		The player that the opponent is representing.
-	 * @param board			The current state of the board.
-	 * @param alpha			The current best alpha.
-	 * @param beta			The current best beta.
-	 * @param depth			The current depth the search is at.
-	 * @return				The best MIN node with its utility value.
+	 * The function to find the best MIN for Alpha Beta using its utility value.
+	 * 
+	 * @param computer The player that the computer is representing.
+	 * @param opponent The player that the opponent is representing.
+	 * @param board    The current state of the board.
+	 * @param alpha    The current best alpha.
+	 * @param beta     The current best beta.
+	 * @param depth    The current depth the search is at.
+	 * @return The best MIN node with its utility value.
 	 */
 	public Node min(Player computer, Player opponent, Board board, double alpha, double beta, int depth) {
 		currTime = (System.nanoTime() - startTime) / 1000000;
@@ -155,13 +163,14 @@ public class AlphaBeta {
 	}
 
 	/**
-	 * The utility function to evaluate the current board for the player.
-	 * Currently the AI makes the best moves by removing possible moves for the other player.
-	 * @param board		The current state of the board.
-	 * @param player	The player being evaluated.
-	 * @param depth		The current depth the utility function is being called from.
-	 * @param timeout	If the runtime is past the allowed timelimit.
-	 * @return			A node with the current board and the utility value.
+	 * The utility function to evaluate the current board for the player. Currently
+	 * the AI makes the best moves by removing possible moves for the other player.
+	 * 
+	 * @param board   The current state of the board.
+	 * @param player  The player being evaluated.
+	 * @param depth   The current depth the utility function is being called from.
+	 * @param timeout If the runtime is past the allowed timelimit.
+	 * @return A node with the current board and the utility value.
 	 */
 	public Node utility(Board board, Player player, Player player2, int depth, boolean timeout) {
 		double value;
@@ -178,8 +187,13 @@ public class AlphaBeta {
 			value = (player.isComputer()) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
 			success = true;
 		} else {
-			value = (player.isComputer()) ?
-					30 - player2.getNumMovesAvailable() : player2.getNumMovesAvailable() - 30;
+			if (turns > 15) {
+				value = (player.isComputer()) ? player.getNumMovesAvailable()
+						: -player.getNumMovesAvailable();
+			} else {
+				value = (player.isComputer()) ? 30 - player2.getNumMovesAvailable()
+						: player2.getNumMovesAvailable() - 30;
+			}
 			success = true;
 		}
 		Node node = new Node(board, value, success);
