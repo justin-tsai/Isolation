@@ -127,6 +127,7 @@ public class Board {
 		/* User unexpected input */
 		} catch (Exception e) {
 			System.out.println("Invalid input.");
+			System.out.println(player.getSymbol() + " tried to move to: " + input);
 			return false;
 		}
 	}

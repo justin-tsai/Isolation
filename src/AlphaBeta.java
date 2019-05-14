@@ -178,18 +178,17 @@ public class AlphaBeta {
 		player.calculate(board);
 		player2.calculate(board);
 		if (timeout) {
-			value = (player.isComputer()) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+			value = (player.isComputer()) ? Integer.MIN_VALUE + 1 : Integer.MAX_VALUE - 1;
 			success = false;
 		} else if (!player.hasMoves()) {
-			value = (player.isComputer()) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+			value = (player.isComputer()) ? Integer.MIN_VALUE + 1 : Integer.MAX_VALUE - 1;
 			success = true;
 		} else if (!player2.hasMoves()) {
-			value = (player.isComputer()) ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+			value = (player.isComputer()) ? Integer.MAX_VALUE - 1: Integer.MIN_VALUE + 1; 
 			success = true;
 		} else {
 			if (turns > 15) {
-				value = (player.isComputer()) ? player.getNumMovesAvailable()
-						: -player.getNumMovesAvailable();
+				value = (player.isComputer()) ? player.getNumMovesAvailable() : -player.getNumMovesAvailable();
 			} else {
 				value = (player.isComputer()) ? 30 - player2.getNumMovesAvailable()
 						: player2.getNumMovesAvailable() - 30;
