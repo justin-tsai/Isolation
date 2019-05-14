@@ -187,8 +187,8 @@ public class AlphaBeta {
 			value = (player.isComputer()) ? Integer.MAX_VALUE - 1: Integer.MIN_VALUE + 1; 
 			success = true;
 		} else {
-			if (turns > 15) {
-				value = (player.isComputer()) ? player.getNumMovesAvailable() : -player.getNumMovesAvailable();
+			if (turns > 15 && player.getNumMovesAvailable() > player2.getNumMovesAvailable()) {
+				value = (player.isComputer()) ? 30 + player.getNumMovesAvailable(): -30 - player.getNumMovesAvailable();
 			} else {
 				value = (player.isComputer()) ? 30 - player2.getNumMovesAvailable()
 						: player2.getNumMovesAvailable() - 30;
