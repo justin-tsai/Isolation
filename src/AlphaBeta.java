@@ -183,18 +183,15 @@ public class AlphaBeta {
 		} else if (!player.hasMoves()) {
 			value = (player.isComputer()) ? Integer.MIN_VALUE + 1 : Integer.MAX_VALUE - 1;
 			success = true;
-		} else if (!player2.hasMoves()) {
-			value = (player.isComputer()) ? Integer.MAX_VALUE - 1: Integer.MIN_VALUE + 1; 
+		} else if (player2.getNumMovesAvailable() < 3) {
+			value = (player.isComputer()) ? Integer.MAX_VALUE - 1 : Integer.MIN_VALUE + 1;
 			success = true;
 		} else {
-			if (turns > 15 && player.getNumMovesAvailable() > player2.getNumMovesAvailable()) {
-				value = (player.isComputer()) ? 30 + player.getNumMovesAvailable(): -30 - player.getNumMovesAvailable();
-			} else {
-				value = (player.isComputer()) ? 30 - player2.getNumMovesAvailable()
-						: player2.getNumMovesAvailable() - 30;
-			}
+			value = (player.isComputer()) ? (25 - player2.getNumMovesAvailable()) + (30 - player.getNumMovesAvailable())
+					: (player2.getNumMovesAvailable() - 25) - ((player.getNumMovesAvailable() - 30));
 			success = true;
 		}
+
 		Node node = new Node(board, value, success);
 		return node;
 	}

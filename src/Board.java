@@ -263,4 +263,5 @@ public class Board {
 		return (char) (num + 65);
 	}
 	
+	
 }

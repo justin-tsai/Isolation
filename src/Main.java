@@ -20,7 +20,6 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
 		while (!validInput) {
 			try {
 				System.out.print("Who goes first, C for computer, O for opponent: ");
